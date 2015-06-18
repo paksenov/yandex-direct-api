@@ -1,0 +1,14 @@
+{
+    "name": "vedebel/yandex-direct-api",
+    "description": "The library for latest Yandex Direct API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eugene Lebediev",
+            "email": "hollowj33@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
