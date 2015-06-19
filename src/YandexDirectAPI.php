@@ -1,4 +1,9 @@
 <?php
+namespace vedebel\ydapi;
+
+use vedebel\ydapi\lib\Registry;
+use vedebel\ydapi\lib\Request;
+use vedebel\ydapi\lib\Response;
 
 /* -------------------- Environment initialization -------------------- */
 
@@ -14,9 +19,6 @@ set_time_limit(0);
 
 
 /* -------------------- Autoloader & Registry initialization -------------------- */
-
-require_once(__DIR__.'/lib/Autoloader.php');
-new YDAPI\lib\Autoloader(__DIR__.'/lib');
 
 $registry = Registry::getInstance();
 

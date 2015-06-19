@@ -1,4 +1,5 @@
 <?php
+namespace vedebel\ydapi\lib;
 
 final class Registry
 {
