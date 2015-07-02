@@ -27,7 +27,7 @@ public function getRequestParams() {
     return $this->request_params;
 }
     
-public function getResponseData() {
+public function getResponse() {
     return $this->decoded_response;
 }
     

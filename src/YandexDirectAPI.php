@@ -7,15 +7,9 @@ use vedebel\ydapi\lib\Response;
 
 /* -------------------- Environment initialization -------------------- */
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
 ini_set('default_socket_timeout', '1200');
 date_default_timezone_set('Europe/Kiev');
 set_time_limit(0);
-
-// ID: 6c0b12d6848c4cfabf00e7054e3c4711
-// Пароль: 346b34eaec1f496d9c895a83d424498a
-// Callback URL: https://oauth.yandex.ru/verification_code
 
 
 /* -------------------- Autoloader & Registry initialization -------------------- */
@@ -366,13 +360,13 @@ public function GetForecastList()
 
 /* ###### Campaigns and Ads ###### */
 
-public function CreateOrUpdateCampaign4Live($params) {
+public function CreateOrUpdateCampaign($params) {
         $params = array(
-            'method' => 'CreateOrUpdateCampaign',
+            'method' => __FUNCTION__,
             'locale' => 'en',
             'param'  =>  $params
         );
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $request  = new Request($params, $this->authToken);
         $response = $request->getResponse();
         return $response;
 }
@@ -402,111 +396,6 @@ public function AssocImage($params) {
 }
 
 /* ###### Campaigns and Ads ###### */
-public function CreateOrUpdateCampaign($login, $campaign_id, $name, $fio, 
-                                       $strategy_name, $email, $warn_place_interval, 
-                                       $money_warning_value, array $minus_keywords = array(), 
-                                       array $days_hours = array(), $time_zone = '', 
-                                       $start_date = '', $send_acc_news = '', 
-                                       $send_warn = '', $max_price = 0.0, $average_price = 0.0, 
-                                       $weekly_sum_limit = 0.0, $clicks_per_week = 0.0, 
-                                       $metrica_sms = '', $moderate_result_sms = '', 
-                                       $money_in_sms = '', $money_out_sms = '', 
-                                       $sms_time_from = '', $sms_time_to = '', 
-                                       $status_behavior = '', $show_on_holidays = '', 
-                                       $holiday_show_from = 0, $holiday_show_to = 0, 
-                                       $status_context_stop = '', $context_limit = '', 
-                                       $context_limit_sum = 0, $context_price_percent = 0,
-                                       $auto_optimization = '', 
-                                       $status_metrica_control = '', 
-                                       $disabled_domains = '', 
-                                       $disabled_ips = '', $status_openStat = '', 
-                                       $consider_time_target = '', $add_relevant_phrases = '', $relevant_phrases_budget_limit = 0)
-    {
-        $params = array(
-            'method' => __FUNCTION__,
-            'locale' => 'en',
-            'param'  => array(
-                'Login'      => $login,
-                'CampaignID' => $campaign_id,
-                'Name'       => $name,
-                'FIO'        => $fio,
-                'Strategy'   => array(
-                    'StrategyName' => $strategy_name
-                ),
-                'EmailNotification' => array(
-                    'Email'             => $email,
-                    'WarnPlaceInterval' => $warn_place_interval,
-                    'MoneyWarningValue' => $money_warning_value
-                )
-            )
-        );
-
-        empty($start_date)       ?: $params['param']['StartDate']                  = $start_date;
-        empty($max_price)        ?: $params['param']['Strategy']['MaxPrice']       = $max_price;
-        empty($average_price)    ?: $params['param']['Strategy']['AveragePrice']   = $average_price;
-        empty($weekly_sum_limit) ?: $params['param']['Strategy']['WeeklySumLimit'] = $weekly_sum_limit;
-        empty($clicks_per_week)  ?: $params['param']['Strategy']['ClicksPerWeek']  = $clicks_per_week;
-        
-        if(!empty($send_acc_news) || 
-           !empty($send_warn))
-            {
-                empty($send_acc_news) ?: $params['param']['EmailNotification']['MetricaSms']        = $send_acc_news;
-                empty($send_warn)     ?: $params['param']['EmailNotification']['ModerateResultSms'] = $send_warn;
-            }
-      
-        if(!empty($metrica_sms)         || 
-           !empty($moderate_result_sms) ||
-           !empty($money_in_sms)        ||
-           !empty($money_out_sms)       ||
-           !empty($sms_time_from)       ||
-           !empty($sms_time_to))
-            {
-                $params['param']['SmsNotification'] = array();
-                
-                empty($metrica_sms)         ?: $params['param']['SmsNotification']['MetricaSms']        = $metrica_sms;
-                empty($moderate_result_sms) ?: $params['param']['SmsNotification']['ModerateResultSms'] = $moderate_result_sms;
-                empty($money_in_sms)        ?: $params['param']['SmsNotification']['MoneyInSms']        = $money_in_sms;
-                empty($money_out_sms)       ?: $params['param']['SmsNotification']['MoneyOutSms']       = $money_out_sms;
-                empty($sms_time_from)       ?: $params['param']['SmsNotification']['SmsTimeFrom']       = $sms_time_from;
-                empty($sms_time_to)         ?: $params['param']['SmsNotification']['SmsTimeTo']         = $sms_time_to;
-            }
-
-        if(!empty($show_on_holidays)  || 
-           !empty($holiday_show_from) ||
-           !empty($holiday_show_to)   ||
-           !empty($time_zone)         ||
-           !empty($days_hours))
-            {
-                $params['param']['TimeTarget'] = array();
-                
-                empty($show_on_holidays)  ?: $params['param']['TimeTarget']['ShowOnHolidays']  = $show_on_holidays;
-                empty($holiday_show_from) ?: $params['param']['TimeTarget']['HolidayShowFrom'] = $holiday_show_from;
-                empty($holiday_show_to)   ?: $params['param']['TimeTarget']['HolidayShowTo']   = $holiday_show_to;
-                empty($time_zone)         ?: $params['param']['TimeTarget']['TimeZone']        = $time_zone;
-                empty($days_hours)        ?: $params['param']['TimeTarget']['DaysHours']       = $days_hours;
-            }
-            
-        empty($status_behavior)               ?: $params['param']['StatusBehavior']             = $status_behavior;
-        empty($status_context_stop)           ?: $params['param']['StatusContextStop']          = $status_context_stop;
-        empty($context_limit)                 ?: $params['param']['ContextLimit']               = $context_limit;
-        empty($context_limit_sum)             ?: $params['param']['ContextLimitSum']            = $context_limit_sum;
-        empty($context_price_percent)         ?: $params['param']['ContextPricePercent']        = $context_price_percent;
-        empty($auto_optimization)             ?: $params['param']['AutoOptimization']           = $auto_optimization;
-        empty($status_metrica_control)        ?: $params['param']['StatusMetricaControl']       = $status_metrica_control;
-        empty($disabled_domains)              ?: $params['param']['DisabledDomains']            = $disabled_domains;
-        empty($disabled_ips)                  ?: $params['param']['DisabledIps']                = $disabled_ips;
-        empty($status_openStat)               ?: $params['param']['StatusOpenStat']             = $status_openStat;
-        empty($consider_time_target)          ?: $params['param']['ConsiderTimeTarget']         = $consider_time_target;
-        empty($minus_keywords)                ?: $params['param']['MinusKeywords']              = $minus_keywords;
-        empty($add_relevant_phrases)          ?: $params['param']['AddRelevantPhrases']         = $add_relevant_phrases;
-        empty($relevant_phrases_budget_limit) ?: $params['param']['RelevantPhrasesBudgetLimit'] = $relevant_phrases_budget_limit;
-
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
-        $response = $request->getResponse();
-         
-        return $response;
-    }
-
 public function GetBalance(array $campaigns_ids)
     {
         $params = array(
@@ -521,7 +410,7 @@ public function GetBalance(array $campaigns_ids)
         return $response;
     }
 
-public function GetCampaignsList(array $logins)
+public function GetCampaignsList()
     {
         $params = array(
             'method' => __FUNCTION__,
@@ -529,7 +418,7 @@ public function GetCampaignsList(array $logins)
             'param'  => $logins
         );
 
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $request  = new Request($params, $this->authToken);
         $response = $request->getResponse();
          
         return $response;
@@ -677,83 +566,8 @@ public function UnArchiveCampaign($campaign_id)
          
         return $response;
     }
-
-public function CreateOrUpdateBanners($banner_id, $campaign_id, $title, $text, $geo, $phrases, $href = '', array $sitelinks = array(), $contact_person = '', $country = '', $country_code = '', $city = '', $street = '', $house = '', $build = '', $apart = '', $city_code = '', $phone = '', $phone_ext = '', $company_Name = '', $im_client = '', $im_login = '', $extra_message = '', $contact_email = '', $work_time = '', $ogrn = '', array $point_on_map = array(), array $minus_keywords = array(), $groupName = false)
-    {
-        $params = array(
-            'method' => __FUNCTION__,
-            'locale' => 'en',
-            'param'  => array(
-                array(
-                    'BannerID'   => $banner_id,
-                    'CampaignID' => $campaign_id,
-                    'Title'      => $title,
-                    'Text'       => $text,
-                    'Geo'        => $geo,
-                    'Phrases'    => $phrases,
-                    'AdGroupName'=> $groupName? $groupName : $title
-                )
-            )
-        );
-        
-        //!(!empty($href) && empty($country)) ?: $params['param'][0]['Href'] = $href;
-        
-        if (!empty($href))
-            $params['param'][0]['Href'] = $href;
-        
-        empty($minus_keywords) ?: $params['param'][0]['MinusKeywords'] = $minus_keywords;
-        empty($sitelinks)      ?: $params['param'][0]['Sitelinks']     = $sitelinks;
-
-        if(!empty($contact_person) ||
-           !empty($country)        ||
-           !empty($country_code)   ||
-           !empty($city)           ||
-           !empty($street)         ||
-           !empty($house)          ||
-           !empty($build)          ||
-           !empty($apart)          ||
-           !empty($city_code)      ||
-           !empty($phone)          ||
-           !empty($phone_ext)      ||
-           !empty($company_Name)   ||
-           !empty($im_client)      ||
-           !empty($im_login)       ||
-           !empty($extra_message)  ||
-           !empty($contact_email)  ||
-           !empty($work_time)      ||
-           !empty($ogrn)           ||
-           !empty($point_on_map))
-            {
-                //$params['param']['ContactInfo'] = array();
-
-                empty($contact_person) ?: $params['param'][0]['ContactInfo']['ContactPerson'] = $contact_person;
-                empty($country)        ?: $params['param'][0]['ContactInfo']['Country']       = $country;
-                empty($country_code)   ?: $params['param'][0]['ContactInfo']['CountryCode']   = $country_code;
-                empty($city)           ?: $params['param'][0]['ContactInfo']['City']          = $city;
-                empty($street)         ?: $params['param'][0]['ContactInfo']['Street']        = $street;
-                empty($house)          ?: $params['param'][0]['ContactInfo']['House']         = $house;
-                empty($build)          ?: $params['param'][0]['ContactInfo']['Build']         = $build;
-                empty($apart)          ?: $params['param'][0]['ContactInfo']['Apart']         = $apart;
-                empty($city_code)      ?: $params['param'][0]['ContactInfo']['CityCode']      = $city_code;
-                empty($phone)          ?: $params['param'][0]['ContactInfo']['Phone']         = $phone;
-                empty($phone_ext)      ?: $params['param'][0]['ContactInfo']['PhoneExt']      = $phone_ext;
-                empty($company_Name)   ?: $params['param'][0]['ContactInfo']['CompanyName']   = $company_Name;
-                empty($im_client)      ?: $params['param'][0]['ContactInfo']['IMClient']      = $im_client;
-                empty($im_login)       ?: $params['param'][0]['ContactInfo']['IMLogin']       = $im_login;
-                empty($extra_message)  ?: $params['param'][0]['ContactInfo']['ExtraMessage']  = $extra_message;
-                empty($contact_email)  ?: $params['param'][0]['ContactInfo']['ContactEmail']  = $contact_email;
-                empty($work_time)      ?: $params['param'][0]['ContactInfo']['WorkTime']      = $work_time;
-                empty($ogrn)           ?: $params['param'][0]['ContactInfo']['OGRN']          = $ogrn;
-                empty($point_on_map)   ?: $params['param'][0]['ContactInfo']['PointOnMap']    = $point_on_map;
-            }
-        //print_r($params);
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
-        $response = $request->getResponse();
-         
-        return $response;
-    }
     
-public function CreateOrUpdateBanners4live($banner_id, $campaign_id, $title, $text, $geo, $phrases, $href, $groupName = false, $groupID = 0, array $sitelinks = array(), $contact_person = '', $country = '', $country_code = '', $city = '', $street = '', $house = '', $build = '', $apart = '', $city_code = '', $phone = '', $phone_ext = '', $company_Name = '', $im_client = '', $im_login = '', $extra_message = '', $contact_email = '', $work_time = '', $ogrn = '', array $point_on_map = array(), array $minus_keywords = array())
+public function CreateOrUpdateBanners4Live($banner_id, $campaign_id, $title, $text, $geo, $phrases, $href, $groupName = false, $groupID = 0, array $sitelinks = array(), $contact_person = '', $country = '', $country_code = '', $city = '', $street = '', $house = '', $build = '', $apart = '', $city_code = '', $phone = '', $phone_ext = '', $company_Name = '', $im_client = '', $im_login = '', $extra_message = '', $contact_email = '', $work_time = '', $ogrn = '', array $point_on_map = array(), array $minus_keywords = array())
     {
         $params = array(
             'method' => 'CreateOrUpdateBanners',
@@ -829,6 +643,35 @@ public function CreateOrUpdateBanners4live($banner_id, $campaign_id, $title, $te
           //  $params['param'][4] = $params['param'][0];
         //print_r($params);
         $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $response = $request->getResponse();
+         
+        return $response;
+    }
+
+    public function CreateOrUpdateBanners($banner_id = 0, $campaign_id, $title, $text, $phrases = [], $href = '', $groupName = false, $groupID = 0, $params = [])
+    {
+        $data = [
+            'method' => __FUNCTION__,
+            'locale' => 'en',
+            'param'  => [
+                [
+                    'BannerID'    => $banner_id,
+                    'CampaignID'  => $campaign_id,
+                    'Title'       => $title,
+                    'Text'        => $text,
+                    'Href'        => $href,
+                    'Phrases'     => $phrases,
+                    'AdGroupID'   => $groupID, 
+                    'AdGroupName' => $groupName ? $groupName : $title
+                ]
+            ]
+        ];
+        
+        if (!empty($params)) {
+            array_merge($data['param'], $params);
+        }
+
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
          
         return $response;

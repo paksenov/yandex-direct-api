@@ -5,11 +5,9 @@ class Request
 {
 
 private $request_params; 
-private $clientLogin = false;
     
-public function __construct($clientLogin, array $request_params, $token)
+public function __construct(array $request_params, $token)
     {
-        $this->clientLogin              = $clientLogin;
         $this->request_params           = $request_params;
         $this->request_params['token']  = $token;
     }
