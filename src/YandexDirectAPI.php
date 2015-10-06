@@ -111,28 +111,46 @@ private $authToken   = '';
 
 /* ###### Statistics and Analysis ######*/
     
-    public function GetSummaryStat(array $campaign_ids, $start_date, $end_date)
+    public function GetSummaryStat(array $campaign_ids, $start_date, $end_date, $currency = 'UAH')
     {
-        $params = array(
-            'method' => __FUNCTION__,
+        $data = [
+            'method' => 'GetSummaryStat',
             'locale' => 'en',
-            'param'  => array(
-                'CampaignIDS' => $campaign_ids,
-                'StartDate'   => $start_date,
-                'EndDate'     => $end_date,
-                'Currency' => 'UAH'
-            )
-        );
-
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+            'param'  => [
+                'CampaignIDS'=> $campaign_ids,
+                'StartDate'=> $start_date,
+                'EndDate' => $end_date,
+                'Currency' => $currency
+            ]
+        ];
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
          
         return $response;
     }
-    
- /*
-  * Add Currency
-  */   
+
+    public function GetBannersStat($campaignId, $startDate, $endDate, $currency = 'RUB', $includeVat = 'No', $includeDiscount = 'No')
+    {
+        $data = [
+            "method" => "GetBannersStat",
+            "param" => [
+                "CampaignID" => $campaignId,
+                "StartDate" => $startDate,
+                "EndDate" => $endDate,
+                "GroupByColumns" => [],
+                "OrderBy" => [],
+                "Currency" => $currency,
+                "IncludeVAT" => $includeVat,
+                "IncludeDiscount" => $includeDiscount
+            ]
+        ];
+
+        $request  = new Request($data, $this->authToken);
+        $response = $request->getResponse();
+
+        return $response;
+    }
+
     public function CreateNewReport($campaign_id, $start_date, $end_date, $type_result_report, array $group_by_columns = array(), $Currency = 'USD', $limit = 0, $offset = 0, $group_by_date = '', array $order_by = array(), $compress_report = 0, $page_type  = '', $position_type = '', array $banner = array(), array $geo = array(), array $phrase = array(), array $page_name = array(), array $stat_goals = array())
     {
         $params = array(
@@ -411,15 +429,15 @@ private $authToken   = '';
         return $response;
     }
 
-    public function GetCampaignsList()
+    public function GetCampaignsList($logins = [])
     {
-        $params = array(
+        $data = array(
             'method' => __FUNCTION__,
             'locale' => 'en',
-            'param'  => []
+            'param'  => $logins
         );
 
-        $request  = new Request($params, $this->authToken);
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
 
         return $response;
@@ -441,32 +459,20 @@ private $authToken   = '';
         return $response;
     }
 
-    public function GetCampaignsListFilter(array $logins, array $status_moderate = array(), array $is_active = array(), array $status_archive = array(), array $status_activating = array(), array $status_show = array())
+    public function GetCampaignsListFilter(array $logins, $filter = [])
     {
-        $params = array(
+        $data = [
             'method' => __FUNCTION__,
             'locale' => 'en',
-            'param'  => array(
+            'param'  => [
                 'Logins' => $logins
-            )
-        );
-        
-        if(!empty($status_moderate)   || 
-           !empty($is_active)         || 
-           !empty($status_archive)    || 
-           !empty($status_activating) || 
-           !empty($status_show))
-            {
-                $params['param']['Filter'] = array();
-                
-                empty($status_moderate)   ?: $params['param']['Filter']['StatusModerate']   = $status_moderate;
-                empty($is_active)         ?: $params['param']['Filter']['IsActive']         = $is_active;
-                empty($status_archive)    ?: $params['param']['Filter']['StatusArchive']    = $status_archive;
-                empty($status_activating) ?: $params['param']['Filter']['StatusActivating'] = $status_activating;
-                empty($status_show)       ?: $params['param']['Filter']['StatusShow']       = $status_show;
-            }
+            ]
+        ];
+        if (!empty($filter)) {
+            $data['param']['Filter'] = $filter;
+        }
 
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
          
         return $response;
@@ -570,9 +576,6 @@ private $authToken   = '';
 
         public function CreateOrUpdateBanners($banner_id = 0, $campaign_id, $title, $text, $phrases = [], $href = '', $groupName = false, $groupID = 0, $params = [])
     {
-        $title = utf8_encode($title);
-        $text = utf8_encode($text);
-
         $data = [
             'method' => __FUNCTION__,
             'locale' => 'en',
@@ -627,6 +630,15 @@ private $authToken   = '';
         
         $data['param']['GetPhrases'] = !empty($params['GetPhrases']) ? $params['GetPhrases'] : 'No';
 
+        if (!empty($params['FieldsNames'])) {
+            $data['param']['FieldsNames'] = $params['FieldsNames'];
+        }
+        if (!empty($params['Filter'])) {
+            foreach ($params['Filter'] as $filter) {
+                $data['param']['Filter'][] = $filter;
+            }
+        }
+
         if(!empty($status_phone_moderate)   || 
            !empty($status_banner_moderate)  || 
            !empty($status_phrases_moderate) || 
@@ -635,7 +647,7 @@ private $authToken   = '';
            !empty($is_active)               ||
            !empty($status_archive))
             {
-                $data['param']['Filter'] = array();
+                $data['param']['Filter'] = [];
                 
                 empty($status_phone_moderate)   ?: $data['param']['Filter']['StatusPhoneModerate']   = $status_phone_moderate;
                 empty($status_banner_moderate)  ?: $data['param']['Filter']['StatusBannerModerate']  = $status_banner_moderate;
@@ -837,20 +849,20 @@ private $authToken   = '';
 
 /* ###### Overall figures ###### */
 
-    public function CreateNewSubclient($login, $name, $surname)
+    public function CreateNewSubclient($login, $name, $surname, $currency)
     {
-        $params = array(
+        $data = [
             'method' => __FUNCTION__,
             'locale' => 'en',
-            'param'  => array(
+            'param'  => [
                 'Login'   => $login,
                 'Name'    => $name,
                 'Surname' => $surname,
-                'Currency' => 'UAH'
-            )
-        );
+                'Currency' => $currency
+            ]
+        ];
 
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
          
         return $response;
@@ -1038,5 +1050,4 @@ private $authToken   = '';
          
         return $response;
     }
-    
 }

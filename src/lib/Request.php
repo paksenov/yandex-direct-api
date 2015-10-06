@@ -4,7 +4,7 @@ namespace vedebel\ydapi\lib;
 class Request
 {
 
-private $request_params; 
+private $request_params;
     
 public function __construct(array $request_params, $token)
     {
@@ -26,7 +26,7 @@ private function encodeRequest($request_params)
             $value = mb_convert_encoding($value, 'UTF-8');
         });
 
-        $json_encoded_params = json_encode($request_params);
+        $json_encoded_params = json_encode($request_params, JSON_UNESCAPED_UNICODE);
 
         return $json_encoded_params;
     }
