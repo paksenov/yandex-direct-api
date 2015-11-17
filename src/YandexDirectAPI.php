@@ -38,17 +38,17 @@ private $authToken   = '';
 
     public function CreateInvoice($master_token, $operation_num, $login, array $payments)
     {
-        $params = array(
+        $data = [
             'method'        => __FUNCTION__,
             'locale'        => 'en',
             'finance_token' => $this->getFinanceToken($master_token, $operation_num, __FUNCTION__, $login),
             'operation_num' => $operation_num,
-            'param'         => array(
+            'param'         => [
                 'Payments' => $payments
-            )
-        );
+            ]
+        ];
 
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
          
         return $response;
@@ -106,6 +106,11 @@ private $authToken   = '';
         $response = $request->getResponse();
          
         return $response;
+    }
+
+    private function getFinanceToken($master_token, $operation_num, $method, $login)
+    {
+        return hash('sha256', $master_token . $operation_num . $method . $login);
     }
 
 
