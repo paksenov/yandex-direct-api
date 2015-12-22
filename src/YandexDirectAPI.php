@@ -38,17 +38,17 @@ private $authToken   = '';
 
     public function CreateInvoice($master_token, $operation_num, $login, array $payments)
     {
-        $params = array(
+        $data = [
             'method'        => __FUNCTION__,
             'locale'        => 'en',
             'finance_token' => $this->getFinanceToken($master_token, $operation_num, __FUNCTION__, $login),
             'operation_num' => $operation_num,
-            'param'         => array(
+            'param'         => [
                 'Payments' => $payments
-            )
-        );
+            ]
+        ];
 
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
          
         return $response;
@@ -106,6 +106,11 @@ private $authToken   = '';
         $response = $request->getResponse();
          
         return $response;
+    }
+
+    private function getFinanceToken($master_token, $operation_num, $method, $login)
+    {
+        return hash('sha256', $master_token . $operation_num . $method . $login);
     }
 
 
@@ -734,14 +739,19 @@ private $authToken   = '';
 
     public function ModerateBanners(array $banners_ids, $campaign_id = 0)
     {
-        $data = array(
+        $data = [
             'method' => __FUNCTION__,
             'locale' => 'en',
-            'param'  => array(
-                'CampaignID' => $campaign_id,
-                'BannerIDS'  => $banners_ids
-            )
-        );
+            'param'  => []
+        ];
+
+        if ($campaign_id) {
+            $data['param']['CampaignID'] = $campaign_id;
+        }
+
+        if ($banners_ids) {
+            $data['param']['BannerIDS'] = $banners_ids;
+        }
 
         $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
@@ -899,13 +909,13 @@ private $authToken   = '';
 
     public function GetClientsUnits(array $logins)
     {
-        $params = array(
+        $data = array(
             'method' => __FUNCTION__,
             'locale' => 'en',
             'param'  => $logins
         );
 
-        $request  = new Request($this->clientLogin, $params, $this->authToken);
+        $request  = new Request($data, $this->authToken);
         $response = $request->getResponse();
          
         return $response;
